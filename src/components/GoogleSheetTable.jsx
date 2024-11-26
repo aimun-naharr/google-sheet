@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { generateFormattedData, generateHeaders } from "../lib/utils";
 import baseAxios from "../services/api";
 
 export default function GoogleSheetTable() {
@@ -14,8 +15,8 @@ export default function GoogleSheetTable() {
     getRows();
   }, []);
 
-  const tableHeaders = data?.values[0];
-  const tableRows = data?.values.slice(1);
+  const tableHeaders = generateHeaders(data?.values[0]);
+  const tableRows = generateFormattedData(data?.values.slice(1));
   console.log(tableHeaders, tableRows);
   return (
     <div>
@@ -28,25 +29,32 @@ export default function GoogleSheetTable() {
                 return (
                   <th
                     className="font-semibold px-4 py-3 border min-w-[200px]"
-                    key={`${header}-${i + 1}`}
+                    key={`${header.name}-${i + 1}`}
                   >
-                    {header}
+                    {header.value}
                   </th>
                 );
               })}
             </tr>
           </thead>
           <tbody>
-            {tableRows.map((row, rowIndex) => (
+            {tableRows?.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                {tableHeaders.map((_, colIndex) => (
-                  <td
-                    key={colIndex}
-                    className="border border-gray-300 px-4 py-2"
-                  >
-                    {row[colIndex] || "N/A"}
-                  </td>
-                ))}
+                {tableHeaders?.map((header) => {
+                  const head = header.name.split("")[0];
+                  const rowKey = Object.keys(row).find((itm) =>
+                    itm.includes(head)
+                  );
+                  console.log(rowKey);
+                  return (
+                    <td
+                      key={rowKey}
+                      className="border border-gray-300 px-4 py-2"
+                    >
+                      {row[rowKey]}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

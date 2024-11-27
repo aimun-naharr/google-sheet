@@ -1,64 +1,161 @@
 import { useEffect, useState } from "react";
 import { generateFormattedData, generateHeaders } from "../lib/utils";
 import baseAxios from "../services/api";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { EllipsisVertical } from "lucide-react";
+import UpdateModal from "./modal/UpdateModal";
+import useFetchData from "../hooks/useFetchData";
+import DeleteModal from "./modal/DeleteModal";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import useSheetLink from "../hooks/useSheetLink";
+import { Button } from "./ui/button";
+import AddModal from "./modal/AddModal";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
 
 export default function GoogleSheetTable() {
-  const [data, setData] = useState(null);
-  const getRows = async () => {
-    const url = `/values/Sheet1`;
-    const response = await baseAxios.get(url);
-    console.log("table response", response.data);
-    setData(response.data);
-    return response.data;
-  };
-  useEffect(() => {
-    getRows();
-  }, []);
+  const { data, setData } = useFetchData(null);
+  const { setSheetLink } = useSheetLink();
+  const [sheetLinkValue, setSheetLinkValue] = useState("");
+  const [disableGetBtn, setDisableGetBtn] = useState(true);
 
-  const tableHeaders = generateHeaders(data?.values[0]);
-  const tableRows = generateFormattedData(data?.values.slice(1));
-  console.log(tableHeaders, tableRows);
+  const tableHeaders =
+    data && data.values.length > 0
+      ? [{ name: "", value: "#" }, ...generateHeaders(data?.values[0])]
+      : null;
+  const tableRows =
+    data && data.values.length > 0
+      ? generateFormattedData(data?.values.slice(1))
+      : null;
+
+  const handleGetData = () => {
+    setSheetLink(sheetLinkValue);
+    setSheetLinkValue("");
+  };
+  const checkIfSheetLinkIsValid = (e) => {
+    const { value } = e.target;
+    const match = value.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+    if (match && match[1]) {
+      setDisableGetBtn(false);
+      setSheetLinkValue(value);
+    }
+  };
+  const getLastRow = (obj) => {
+    const updatedObj = {};
+
+    Object.keys(obj).forEach((key) => {
+      const match = key.match(/^([A-Z]+)(\d+)$/);
+      if (match) {
+        const column = match[1];
+        const row = parseInt(match[2], 10) + 1;
+        updatedObj[`${column}${row}`] = "";
+      }
+    });
+
+    return updatedObj;
+  };
+  const lastRow = tableRows ? getLastRow(tableRows[tableRows?.length - 1]) : [];
+
   return (
-    <div>
-      GoogleSheetTable
-      <div>
-        <table>
-          <thead>
-            <tr>
+    <div className="mt-20">
+      <div className="container">
+        <h1 className="font-semibold text-xl">Sheet Table</h1>
+        <div className="mt-2">
+          <div className="flex gap-4 items-end">
+            <div className="w-2/5 shrink-0">
+              <Label>Sheet link</Label>
+              <Input
+                value={sheetLinkValue}
+                onChange={checkIfSheetLinkIsValid}
+              />
+            </div>
+            <div className="">
+              <Button disabled={disableGetBtn} onClick={handleGetData}>
+                Get Data
+              </Button>
+            </div>
+          </div>
+          {data ? (
+            <div className="flex justify-end mb-4">
+              <AddModal row={lastRow} setData={setData} />
+            </div>
+          ) : null}
+        </div>
+      </div>
+      <div className="container border py-10  rounded">
+        <Table className="overflow-x-scroll">
+          <TableHeader>
+            <TableRow>
               {tableHeaders?.map((header, i) => {
+                if (i === 0) {
+                  return (
+                    <TableHead
+                      className="text-center"
+                      key={`${header.name}-${i + 1}`}
+                    >
+                      {header.value}
+                    </TableHead>
+                  );
+                }
                 return (
-                  <th
-                    className="font-semibold px-4 py-3 border min-w-[200px]"
+                  <TableHead
+                    className=" min-w-[80px]"
                     key={`${header.name}-${i + 1}`}
                   >
                     {header.value}
-                  </th>
+                  </TableHead>
                 );
               })}
-            </tr>
-          </thead>
-          <tbody>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {tableRows?.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {tableHeaders?.map((header) => {
+              <TableRow key={`${Object.keys(row).join(":")}`}>
+                {tableHeaders?.map((header, colIndex) => {
                   const head = header.name.split("")[0];
                   const rowKey = Object.keys(row).find((itm) =>
                     itm.includes(head)
                   );
-                  console.log(rowKey);
+                  if (colIndex == 0) {
+                    return (
+                      <TableCell key={colIndex} className="text-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger className="bg-transparent">
+                            <EllipsisVertical />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="py-1 flex flex-col  justify-center items-center">
+                            <UpdateModal row={row} setData={setData} />
+
+                            <DeleteModal row={row} setData={setData} />
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    );
+                  }
                   return (
-                    <td
-                      key={rowKey}
-                      className="border border-gray-300 px-4 py-2"
-                    >
+                    <TableCell key={`${rowKey}`} className="">
                       {row[rowKey]}
-                    </td>
+                    </TableCell>
                   );
                 })}
-              </tr>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

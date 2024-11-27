@@ -16,13 +16,14 @@ export const addRow = async (token, values) => {
   return response.data;
 };
 
-export const getRows = async (token) => {
-  const url = `${API_BASE}/values/Sheet1`;
+export const getRows = async (sheetId) => {
+  const url = `${sheetId}/values/Sheet1`;
   const response = await baseAxios.get(url);
-  return response.data;
+  return response;
 };
 
 export const updateRow = async (token, range, values) => {
+  // token, "Sheet1!A2:B2", ["Updated Data", "456"]
   const url = `${API_BASE}/values/${range}?valueInputOption=RAW`;
   const config = {
     headers: { Authorization: `Bearer ${token}` },

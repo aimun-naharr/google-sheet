@@ -5,39 +5,16 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router";
 
 export default function LoginForm() {
-  const [token, setToken] = useState("");
   let navigate = useNavigate();
   const handleLogin = useGoogleLogin({
     onSuccess: (response) => {
-      console.log("Login Response:", response);
-
       try {
         // Extract the access token from the response
         const { access_token } = response;
-        console.log("Access Token:", access_token);
         navigate("/google-sheet-table");
 
         // Store the access token
         localStorage.setItem("token", access_token);
-        setToken(access_token);
-
-        // Optionally, you can now use the token to make API requests
-        // For example: Fetch Google Sheets data
-        axios
-          .get(
-            "https://sheets.googleapis.com/v4/spreadsheets/1rWSZDHbINnCV0rS6G5aAbMnPLHd0_HoN9rIsYh33MCQ/values/Sheet1",
-            {
-              headers: {
-                Authorization: `Bearer ${access_token}`,
-              },
-            }
-          )
-          .then((response) => {
-            console.log("Sheet data:", response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching sheet data:", error);
-          });
       } catch (error) {
         console.error("Error:", error);
       }
@@ -49,9 +26,12 @@ export default function LoginForm() {
       "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive",
   });
   return (
-    <div>
+    <div className="container grid place-items-center h-screen">
       {" "}
-      <Button onClick={handleLogin}>Log in with google</Button>
+      <div className="flex flex-col gap-6 py-4 px-6 shadow-sm border">
+        <h1 className="font-semibold">Sign in with your google account</h1>
+        <Button onClick={handleLogin}>Log in with google</Button>
+      </div>
     </div>
   );
 }

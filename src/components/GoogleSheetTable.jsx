@@ -33,6 +33,7 @@ export default function GoogleSheetTable() {
   const { setSheetLink } = useSheetLink();
   const [sheetLinkValue, setSheetLinkValue] = useState("");
   const [disableGetBtn, setDisableGetBtn] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const tableHeaders =
     data && data.values.length > 0
@@ -47,12 +48,21 @@ export default function GoogleSheetTable() {
     setSheetLink(sheetLinkValue);
     setSheetLinkValue("");
   };
-  const checkIfSheetLinkIsValid = (e) => {
-    const { value } = e.target;
+
+  const checkIfSheetLinkIsValid = (value) => {
     const match = value.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
     if (match && match[1]) {
+      return true;
+    } else false;
+  };
+  const handleOnchange = (e) => {
+    const { value } = e.target;
+    setSheetLinkValue(value);
+    if (checkIfSheetLinkIsValid(value)) {
       setDisableGetBtn(false);
-      setSheetLinkValue(value);
+      setErrorMessage("");
+    } else {
+      setErrorMessage("Please provide a valid link");
     }
   };
   const getLastRow = (obj) => {
@@ -79,17 +89,18 @@ export default function GoogleSheetTable() {
           <div className="flex gap-4 items-end">
             <div className="w-2/5 shrink-0">
               <Label>Sheet link</Label>
-              <Input
-                value={sheetLinkValue}
-                onChange={checkIfSheetLinkIsValid}
-              />
+              <Input value={sheetLinkValue} onChange={handleOnchange} />
             </div>
+
             <div className="">
               <Button disabled={disableGetBtn} onClick={handleGetData}>
                 Get Data
               </Button>
             </div>
           </div>
+          {errorMessage.length > 0 && (
+            <p className="text-sm mt-1 text-red-500">{errorMessage}</p>
+          )}
           {data ? (
             <div className="flex justify-end mb-4">
               <AddModal row={lastRow} setData={setData} />

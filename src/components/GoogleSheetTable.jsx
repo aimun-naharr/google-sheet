@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { generateFormattedData, generateHeaders } from "../lib/utils";
+import {
+  extractSheetId,
+  generateFormattedData,
+  generateHeaders,
+} from "../lib/utils";
 import baseAxios from "../services/api";
 import {
   DropdownMenu,
@@ -20,17 +24,17 @@ import AddModal from "./modal/AddModal";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "./ui/table";
 import TableSkeleton from "./ui/TableSkeleton";
+import { getRows } from "../services/actions";
 
 export default function GoogleSheetTable() {
-  const { data, setData, isFetching } = useFetchData(null);
-  const { setSheetLink } = useSheetLink();
+  const { data, setData, isFetching, setIsFetching } = useFetchData(null);
+  const { setSheetLink, sheetId } = useSheetLink();
   const [sheetLinkValue, setSheetLinkValue] = useState("");
   const [disableGetBtn, setDisableGetBtn] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -44,9 +48,18 @@ export default function GoogleSheetTable() {
       ? generateFormattedData(data?.values.slice(1))
       : null;
 
-  const handleGetData = () => {
+  const handleGetData = async () => {
     setSheetLink(sheetLinkValue);
     setSheetLinkValue("");
+    setIsFetching(true);
+    try {
+      const id = extractSheetId(sheetLinkValue);
+      const response = await getRows(id);
+      setData(response.data);
+      setIsFetching(false);
+    } catch (error) {
+      setIsFetching(false);
+    }
   };
 
   const checkIfSheetLinkIsValid = (value) => {

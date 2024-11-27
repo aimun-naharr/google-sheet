@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getRows } from "../services/actions";
+import useSheetLink from "./useSheetLink";
 
 export default function useFetchData() {
   const [data, setData] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   const sheetId = localStorage.getItem("sheet-id");
+  console.log("sheetId", sheetId);
   const fetchData = async () => {
+    setIsFetching(true);
     try {
-      setIsFetching(true);
       const response = await getRows(sheetId);
       setData(response.data);
       setIsFetching(false);
@@ -15,10 +17,10 @@ export default function useFetchData() {
       setIsFetching(false);
     }
   };
-  useEffect(() => {
-    if (sheetId?.length > 0) {
-      fetchData();
-    }
-  }, [sheetId]);
+  // useEffect(() => {
+  //   if (sheetId?.length > 0) {
+  //     fetchData();
+  //   }
+  // }, [sheetId]);
   return { data, setData, isFetching, setIsFetching };
 }

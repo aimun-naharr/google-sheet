@@ -26,9 +26,10 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import TableSkeleton from "./ui/TableSkeleton";
 
 export default function GoogleSheetTable() {
-  const { data, setData } = useFetchData(null);
+  const { data, setData, isFetching } = useFetchData(null);
   const { setSheetLink } = useSheetLink();
   const [sheetLinkValue, setSheetLinkValue] = useState("");
   const [disableGetBtn, setDisableGetBtn] = useState(true);
@@ -96,67 +97,73 @@ export default function GoogleSheetTable() {
           ) : null}
         </div>
       </div>
-      <div className="container border py-10  rounded">
-        <Table className="overflow-x-scroll">
-          <TableHeader>
-            <TableRow>
-              {tableHeaders?.map((header, i) => {
-                if (i === 0) {
+      {isFetching ? (
+        <div className="container mt-2">
+          <TableSkeleton />
+        </div>
+      ) : data && data?.values.length > 0 ? (
+        <div className="container border py-10  rounded">
+          <Table className="overflow-x-scroll">
+            <TableHeader>
+              <TableRow>
+                {tableHeaders?.map((header, i) => {
+                  if (i === 0) {
+                    return (
+                      <TableHead
+                        className="text-center"
+                        key={`${header.name}-${i + 1}`}
+                      >
+                        {header.value}
+                      </TableHead>
+                    );
+                  }
                   return (
                     <TableHead
-                      className="text-center"
+                      className=" min-w-[80px]"
                       key={`${header.name}-${i + 1}`}
                     >
                       {header.value}
                     </TableHead>
                   );
-                }
-                return (
-                  <TableHead
-                    className=" min-w-[80px]"
-                    key={`${header.name}-${i + 1}`}
-                  >
-                    {header.value}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tableRows?.map((row, rowIndex) => (
-              <TableRow key={`${Object.keys(row).join(":")}`}>
-                {tableHeaders?.map((header, colIndex) => {
-                  const head = header.name.split("")[0];
-                  const rowKey = Object.keys(row).find((itm) =>
-                    itm.includes(head)
-                  );
-                  if (colIndex == 0) {
-                    return (
-                      <TableCell key={colIndex} className="text-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger className="bg-transparent">
-                            <EllipsisVertical />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="py-1 flex flex-col  justify-center items-center">
-                            <UpdateModal row={row} setData={setData} />
-
-                            <DeleteModal row={row} setData={setData} />
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    );
-                  }
-                  return (
-                    <TableCell key={`${rowKey}`} className="">
-                      {row[rowKey]}
-                    </TableCell>
-                  );
                 })}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {tableRows?.map((row, rowIndex) => (
+                <TableRow key={`${Object.keys(row).join(":")}`}>
+                  {tableHeaders?.map((header, colIndex) => {
+                    const head = header.name.split("")[0];
+                    const rowKey = Object.keys(row).find((itm) =>
+                      itm.includes(head)
+                    );
+                    if (colIndex == 0) {
+                      return (
+                        <TableCell key={colIndex} className="text-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger className="bg-transparent">
+                              <EllipsisVertical />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="py-1 flex flex-col  justify-center items-center">
+                              <UpdateModal row={row} setData={setData} />
+
+                              <DeleteModal row={row} setData={setData} />
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      );
+                    }
+                    return (
+                      <TableCell key={`${rowKey}`} className="">
+                        {row[rowKey]}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : null}
     </div>
   );
 }

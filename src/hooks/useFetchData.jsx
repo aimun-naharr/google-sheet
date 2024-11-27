@@ -3,15 +3,22 @@ import { getRows } from "../services/actions";
 
 export default function useFetchData() {
   const [data, setData] = useState(null);
+  const [isFetching, setIsFetching] = useState(true);
   const sheetId = localStorage.getItem("sheet-id");
   const fetchData = async () => {
-    const response = await getRows(sheetId);
-    setData(response.data);
+    try {
+      setIsFetching(true);
+      const response = await getRows(sheetId);
+      setData(response.data);
+      setIsFetching(false);
+    } catch (error) {
+      setIsFetching(false);
+    }
   };
   useEffect(() => {
     if (sheetId?.length > 0) {
       fetchData();
     }
   }, [sheetId]);
-  return { data, setData };
+  return { data, setData, isFetching, setIsFetching };
 }

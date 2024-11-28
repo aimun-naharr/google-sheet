@@ -140,10 +140,10 @@ export default function GoogleSheetTable() {
                   if (i === 0) {
                     return (
                       <TableHead
-                        className="text-center"
+                        className="text-center  w-[30px]"
                         key={`${header.name}-${i + 1}`}
                       >
-                        {header.value}
+                        Action
                       </TableHead>
                     );
                   }
@@ -168,21 +168,19 @@ export default function GoogleSheetTable() {
                     );
                     if (colIndex == 0) {
                       return (
-                        <TableCell key={colIndex} className="text-center">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger className="bg-transparent">
-                              <EllipsisVertical />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="py-1 flex flex-col  justify-center items-center">
-                              <UpdateModal
-                                row={row}
-                                setData={setData}
-                                tableHeaders={tableHeaders}
-                              />
+                        <TableCell
+                          key={colIndex}
+                          className="flex items-center justify-center  w-max"
+                        >
+                          <div className="flex gap-3  ">
+                            <UpdateModal
+                              row={row}
+                              setData={setData}
+                              tableHeaders={tableHeaders}
+                            />
 
-                              <DeleteModal row={row} setData={setData} />
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                            <DeleteModal row={row} setData={setData} />
+                          </div>
                         </TableCell>
                       );
                     }

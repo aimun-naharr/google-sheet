@@ -54,14 +54,18 @@ export default function UpdateModal({ row, setData, tableHeaders }) {
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger
-        className="text-sm flex items-center gap-2  hover:bg-secondary py-3 rounded w-full px-4 "
+        className="text-sm  w-full  "
         onClick={() => {
           setOpenModal(true);
         }}
       >
-        <Edit size={14} />
-        Edit
+        <Button size="sm" variant="outline">
+          {" "}
+          <Edit size={14} color="green" />
+          Edit
+        </Button>
       </DialogTrigger>
+
       <DialogContent className="max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Update Row</DialogTitle>

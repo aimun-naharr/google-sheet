@@ -43,13 +43,15 @@ export default function DeleteModal({ row, setData }) {
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger
-        className="text-sm flex items-center gap-2  hover:bg-secondary py-3 rounded w-full px-4 "
+        className="text-sm w-full "
         onClick={() => {
           setOpenModal(true);
         }}
       >
-        <Trash size={14} />
-        Delete
+        <Button size="sm" variant="outline">
+          <Trash size={14} color="red" />
+          Delete
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[500px]">
         <DialogHeader>

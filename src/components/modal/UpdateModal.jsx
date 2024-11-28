@@ -12,14 +12,14 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import baseAxios from "../../services/api";
 import { getRows } from "../../services/actions";
-import useFetchData from "../../hooks/useFetchData";
 import { Edit } from "lucide-react";
 
-export default function UpdateModal({ row, setData }) {
+export default function UpdateModal({ row, setData, tableHeaders }) {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [updatedVal, setUpdatedVal] = useState(row);
-  const rangeKeys = Object.keys(row).join(":");
+  const rangeArr = Object.keys(row);
+  const rangeKeys = [rangeArr[0], rangeArr[rangeArr.length - 1]].join(":");
   const range = `Sheet1!${rangeKeys}`;
   const sheetId = localStorage.getItem("sheet-id");
 
@@ -70,12 +70,16 @@ export default function UpdateModal({ row, setData }) {
 
         <div className="flex flex-col gap-6 ">
           {Object.keys(updatedVal).map((key) => {
+            const keyInt = key.split("")[0];
+            const label = tableHeaders.find((th) => th.name.includes(keyInt));
+
             return (
-              <div key={key} className="flex gap-4 items-center">
-                <Label>{key}:</Label>
+              <div key={key} className="grid grid-cols-6 items-center">
+                <Label className="col-span-2">{label.value}:</Label>
                 <Input
                   value={updatedVal[key]}
                   onChange={(e) => handleOnChange(key, e.target.value)}
+                  className="col-span-4"
                 />
               </div>
             );

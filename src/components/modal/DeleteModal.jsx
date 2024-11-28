@@ -16,7 +16,8 @@ import { Trash } from "lucide-react";
 export default function DeleteModal({ row, setData }) {
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const rangeKeys = Object.keys(row).join(":");
+  const rangeArr = Object.keys(row);
+  const rangeKeys = [rangeArr[0], rangeArr[rangeArr.length - 1]].join(":");
   const range = `Sheet1!${rangeKeys}`;
   const sheetId = localStorage.getItem("sheet-id");
 

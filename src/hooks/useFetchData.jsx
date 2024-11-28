@@ -17,10 +17,10 @@ export default function useFetchData() {
       setIsFetching(false);
     }
   };
-  // useEffect(() => {
-  //   if (sheetId?.length > 0) {
-  //     fetchData();
-  //   }
-  // }, [sheetId]);
+  useEffect(() => {
+    if (sheetId?.length > 0) {
+      fetchData();
+    }
+  }, [sheetId]);
   return { data, setData, isFetching, setIsFetching };
 }

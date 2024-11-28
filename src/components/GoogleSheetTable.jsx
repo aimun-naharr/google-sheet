@@ -94,6 +94,8 @@ export default function GoogleSheetTable() {
   };
   const lastRow = tableRows ? getLastRow(tableRows[tableRows?.length - 1]) : [];
 
+  console.log("tableHeaders", tableHeaders);
+
   return (
     <div className="mt-20">
       <div className="container">
@@ -116,7 +118,11 @@ export default function GoogleSheetTable() {
           )}
           {data ? (
             <div className="flex justify-end mb-4">
-              <AddModal row={lastRow} setData={setData} />
+              <AddModal
+                row={lastRow}
+                setData={setData}
+                tableHeaders={tableHeaders}
+              />
             </div>
           ) : null}
         </div>
@@ -168,7 +174,11 @@ export default function GoogleSheetTable() {
                               <EllipsisVertical />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="py-1 flex flex-col  justify-center items-center">
-                              <UpdateModal row={row} setData={setData} />
+                              <UpdateModal
+                                row={row}
+                                setData={setData}
+                                tableHeaders={tableHeaders}
+                              />
 
                               <DeleteModal row={row} setData={setData} />
                             </DropdownMenuContent>

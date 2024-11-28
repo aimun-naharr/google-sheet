@@ -1,4 +1,8 @@
+import { Edit } from "lucide-react";
 import { useState } from "react";
+import { getRows } from "../../services/actions";
+import baseAxios from "../../services/api";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +13,6 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import baseAxios from "../../services/api";
-import { getRows } from "../../services/actions";
-import { Edit } from "lucide-react";
 
 export default function UpdateModal({ row, setData, tableHeaders }) {
   const [openModal, setOpenModal] = useState(false);

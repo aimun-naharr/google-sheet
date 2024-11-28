@@ -1,26 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useFetchData from "../hooks/useFetchData";
+import useSheetLink from "../hooks/useSheetLink";
 import {
   extractSheetId,
   generateFormattedData,
   generateHeaders,
 } from "../lib/utils";
-import baseAxios from "../services/api";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { EllipsisVertical } from "lucide-react";
-import UpdateModal from "./modal/UpdateModal";
-import useFetchData from "../hooks/useFetchData";
-import DeleteModal from "./modal/DeleteModal";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import useSheetLink from "../hooks/useSheetLink";
-import { Button } from "./ui/button";
+import { getRows } from "../services/actions";
 import AddModal from "./modal/AddModal";
+import DeleteModal from "./modal/DeleteModal";
+import UpdateModal from "./modal/UpdateModal";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import {
   Table,
   TableBody,
@@ -30,7 +22,6 @@ import {
   TableRow,
 } from "./ui/table";
 import TableSkeleton from "./ui/TableSkeleton";
-import { getRows } from "../services/actions";
 
 export default function GoogleSheetTable() {
   const { data, setData, isFetching, setIsFetching } = useFetchData(null);
@@ -81,18 +72,29 @@ export default function GoogleSheetTable() {
   const getLastRow = (obj) => {
     const updatedObj = {};
 
-    Object.keys(obj).forEach((key) => {
-      const match = key.match(/^([A-Z]+)(\d+)$/);
-      if (match) {
-        const column = match[1];
-        const row = parseInt(match[2], 10) + 1;
-        updatedObj[`${column}${row}`] = "";
-      }
-    });
+    if (obj) {
+      Object.keys(obj).forEach((key) => {
+        const match = key.match(/^([A-Z]+)(\d+)$/);
+        if (match) {
+          const column = match[1];
+          const row = parseInt(match[2], 10) + 1;
+          updatedObj[`${column}${row}`] = "";
+        }
+      });
+    } else {
+      [...tableHeaders].forEach((item) => {
+        if (item.name) {
+          // Dynamically replace the last digit '1' with '2'
+          const newKey = item.name.replace(/1$/, "2");
+          updatedObj[newKey] = "";
+        }
+      });
+    }
 
     return updatedObj;
   };
   const lastRow = tableRows ? getLastRow(tableRows[tableRows?.length - 1]) : [];
+  console.log("last row", lastRow);
 
   console.log("tableHeaders", tableHeaders);
 

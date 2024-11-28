@@ -4,12 +4,15 @@ import LoginForm from "./components/LoginForm";
 
 function App() {
   // local
+  const CLIENT_ID =
+    "839002591508-fbqvcg2r9l9tic12g3sn67eeeavdqust.apps.googleusercontent.com";
+
   // const CLIENT_ID =
-  //   "839002591508-fbqvcg2r9l9tic12g3sn67eeeavdqust.apps.googleusercontent.com";
+  //   "https://797924800674-gg0ujac93tutnkrrv3undphleev3f3a6.apps.googleusercontent.com";
 
   // production
-  const CLIENT_ID =
-    "839002591508-bsvtvm715p2n2o6144kfn2pfaqq7f4ej.apps.googleusercontent.com";
+  // const CLIENT_ID =
+  //   "839002591508-bsvtvm715p2n2o6144kfn2pfaqq7f4ej.apps.googleusercontent.com";
   return (
     <>
       <GoogleOAuthProvider clientId={CLIENT_ID}>

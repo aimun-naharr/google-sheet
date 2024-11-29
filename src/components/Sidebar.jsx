@@ -18,7 +18,7 @@ const Sidebar = () => {
             className={cn(
               " px-4 py-3 hover:bg-secondary transition-colors rounded border-l-[4px] border-transparent",
               {
-                "bg-indigo-700/5  border-indigo-700 text-indigo-800  hover:opacity-[0.9] hover:bg-black":
+                "bg-indigo-700/5  border-indigo-700 text-indigo-800  hover:opacity-[0.9] hover:bg-indigo-700/10":
                   item.link === location.pathname,
               }
             )}

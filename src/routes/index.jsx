@@ -4,6 +4,7 @@ import App from "../App";
 import ProtectedRoute from "./ProtectedRoute";
 import GoogleSheetTable from "../components/GoogleSheetTable";
 import AuthRoute from "./AuthRoute";
+import GetStarted from "../components/GetStarted";
 
 export default function AllRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function AllRoutes() {
         </Route>
         {/* <Route path="about" element={<About />} /> */}
         <Route element={<ProtectedRoute />}>
+          <Route path="/get-started" element={<GetStarted />} />
           <Route path="/google-sheet-table" element={<GoogleSheetTable />} />
         </Route>
         {/*

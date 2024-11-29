@@ -10,8 +10,6 @@ export default function useSheetLink() {
         localStorage.setItem("sheet-id", match[1]);
 
         return match[1];
-      } else {
-        throw new Error("Invalid Google Sheets URL");
       }
     } catch (error) {
       console.error(error.message);
@@ -19,7 +17,6 @@ export default function useSheetLink() {
     }
   };
 
-  console.log("sheet-link", sheetId);
   useEffect(() => {
     const id = extractSheetId(sheetLink);
     setSheetId(id);

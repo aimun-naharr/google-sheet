@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getRows } from "../services/actions";
-import useSheetLink from "./useSheetLink";
 
 export default function useFetchData() {
   const [data, setData] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   const sheetId = localStorage.getItem("sheet-id");
-  console.log("sheetId", sheetId);
   const fetchData = async () => {
     setIsFetching(true);
     try {

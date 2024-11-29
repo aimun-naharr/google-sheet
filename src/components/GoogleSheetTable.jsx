@@ -3,11 +3,14 @@ import useFetchData from "../hooks/useFetchData";
 import useSheetLink from "../hooks/useSheetLink";
 import {
   extractSheetId,
+  generateDefaultHeaders,
   generateFormattedData,
   generateHeaders,
+  generateRowFromColumn,
 } from "../lib/utils";
 import { getRows } from "../services/actions";
-import AddModal from "./modal/AddModal";
+import AddColModal from "./modal/AddColModal";
+import AddRowModal from "./modal/AddRowModal";
 import DeleteModal from "./modal/DeleteModal";
 import UpdateModal from "./modal/UpdateModal";
 import { Button } from "./ui/button";
@@ -30,12 +33,13 @@ export default function GoogleSheetTable() {
   const [disableGetBtn, setDisableGetBtn] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const actionCol = { name: "", value: "#" };
   const tableHeaders =
-    data && data.values.length > 0
-      ? [{ name: "", value: "#" }, ...generateHeaders(data?.values[0])]
-      : null;
+    data && data.values && data?.values.length > 0
+      ? [...generateHeaders(data?.values[0]), { ...actionCol }]
+      : [...generateDefaultHeaders()];
   const tableRows =
-    data && data.values.length > 0
+    data && data.values && data?.values.length > 0
       ? generateFormattedData(data?.values.slice(1))
       : null;
 
@@ -69,20 +73,24 @@ export default function GoogleSheetTable() {
       setErrorMessage("Please provide a valid link");
     }
   };
-  const getLastRow = (obj) => {
+  const getLastRow = (index = 1, updateRow) => {
+    // taking the columns without last element
+    const obj = generateRowFromColumn(tableHeaders.slice(0, -1));
     const updatedObj = {};
 
     if (obj) {
       Object.keys(obj).forEach((key) => {
-        const match = key.match(/^([A-Z]+)(\d+)$/);
+        const match = key.split("");
         if (match) {
-          const column = match[1];
-          const row = parseInt(match[2], 10) + 1;
-          updatedObj[`${column}${row}`] = "";
+          const column = match[0];
+          const row = index;
+          const objKey = `${column}${row}`;
+          const updateRowValue = updateRow ? updateRow[objKey] ?? "" : null;
+          updatedObj[objKey] = updateRow ? updateRowValue : obj[key];
         }
       });
     } else {
-      [...tableHeaders].forEach((item) => {
+      [...tableHeaders]?.forEach((item) => {
         if (item.name) {
           // Dynamically replace the last digit '1' with '2'
           const newKey = item.name.replace(/1$/, "2");
@@ -93,19 +101,22 @@ export default function GoogleSheetTable() {
 
     return updatedObj;
   };
-  const lastRow = tableRows ? getLastRow(tableRows[tableRows?.length - 1]) : [];
-  console.log("last row", lastRow);
 
-  console.log("tableHeaders", tableHeaders);
+  const rowsLastIndex = tableRows ? tableRows?.length + 2 : 2;
+  const lastRow = tableRows ? getLastRow(rowsLastIndex) : getLastRow();
 
   return (
     <div className="mt-20">
       <div className="container">
-        <h1 className="font-semibold text-xl">Sheet Table</h1>
+        <h1 className="font-semibold text-xl">Update your google sheet</h1>
+        <p className="mt-1 mb-4 text-gray-500 max-w-lg text-sm leading-relaxed">
+          Just open your Google Sheet, copy the URL, and pop it into this input
+          box to fetch your data easy and quick!
+        </p>
         <div className="mt-2">
           <div className="flex gap-4 items-end">
             <div className="w-2/5 shrink-0">
-              <Label>Sheet link</Label>
+              <Label>Sheet Url</Label>
               <Input value={sheetLinkValue} onChange={handleOnchange} />
             </div>
 
@@ -118,9 +129,10 @@ export default function GoogleSheetTable() {
           {errorMessage.length > 0 && (
             <p className="text-sm mt-1 text-red-500">{errorMessage}</p>
           )}
-          {data ? (
+
+          {data && data.values && data?.values.length > 0 ? (
             <div className="flex justify-end mb-4">
-              <AddModal
+              <AddRowModal
                 row={lastRow}
                 setData={setData}
                 tableHeaders={tableHeaders}
@@ -129,17 +141,30 @@ export default function GoogleSheetTable() {
           ) : null}
         </div>
       </div>
+      {data && !data?.values ? (
+        <div className="border rounded grid place-items-center h-[50vh] mt-20">
+          <div>
+            <p>
+              Looks like your Google Sheet is empty. Try adding columns to get
+              started!
+            </p>
+            <div className="flex py-4 justify-center items-center mb-4">
+              <AddColModal setData={setData} tableHeaders={tableHeaders} />
+            </div>
+          </div>
+        </div>
+      ) : null}
       {isFetching ? (
-        <div className="container mt-2">
+        <div className="container mt-6">
           <TableSkeleton />
         </div>
-      ) : data && data?.values.length > 0 ? (
-        <div className="container border py-10  rounded">
-          <Table className="overflow-x-scroll">
+      ) : data && data.values && data?.values.length > 0 ? (
+        <div className="container border pt-10 pb-4 max-w-[500px]  rounded ">
+          <Table className="">
             <TableHeader>
               <TableRow>
                 {tableHeaders?.map((header, i) => {
-                  if (i === 0) {
+                  if (i === tableHeaders.length - 1) {
                     return (
                       <TableHead
                         className="text-center  w-[30px]"
@@ -151,7 +176,7 @@ export default function GoogleSheetTable() {
                   }
                   return (
                     <TableHead
-                      className=" min-w-[80px]"
+                      className=" text-nowrap"
                       key={`${header.name}-${i + 1}`}
                     >
                       {header.value}
@@ -168,26 +193,27 @@ export default function GoogleSheetTable() {
                     const rowKey = Object.keys(row).find((itm) =>
                       itm.includes(head)
                     );
-                    if (colIndex == 0) {
+                    const updatedRow = getLastRow(rowIndex + 2, row);
+                    if (colIndex == tableHeaders.length - 1) {
                       return (
                         <TableCell
                           key={colIndex}
-                          className="flex items-center justify-center  w-max"
+                          className="flex items-center justify-center  "
                         >
                           <div className="flex gap-3  ">
                             <UpdateModal
-                              row={row}
+                              row={updatedRow}
                               setData={setData}
                               tableHeaders={tableHeaders}
                             />
 
-                            <DeleteModal row={row} setData={setData} />
+                            <DeleteModal row={updatedRow} setData={setData} />
                           </div>
                         </TableCell>
                       );
                     }
                     return (
-                      <TableCell key={`${rowKey}`} className="">
+                      <TableCell key={`${rowKey}`} className="text-nowrap">
                         {row[rowKey]}
                       </TableCell>
                     );
@@ -198,6 +224,7 @@ export default function GoogleSheetTable() {
           </Table>
         </div>
       ) : null}
+      <div className="h-40"></div>
     </div>
   );
 }

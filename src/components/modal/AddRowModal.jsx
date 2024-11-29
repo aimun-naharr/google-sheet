@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getRows } from "../../services/actions";
+import baseAxios from "../../services/api";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,16 +12,17 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import baseAxios from "../../services/api";
-import { getRows } from "../../services/actions";
 
-export default function AddModal({ row, setData, tableHeaders }) {
+export default function AddRowModal({ row, setData, tableHeaders }) {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [updatedVal, setUpdatedVal] = useState(row);
+  useEffect(() => {
+    setUpdatedVal(row);
+  }, [row]);
   const rangeArr = Object.keys(row);
   const rangeKeys = [rangeArr[0], rangeArr[rangeArr.length - 1]].join(":");
+
   const range = `Sheet1!${rangeKeys}`;
   const sheetId = localStorage.getItem("sheet-id");
 
@@ -29,7 +33,7 @@ export default function AddModal({ row, setData, tableHeaders }) {
       [key]: value,
     }));
   };
-  const handleUpdate = async () => {
+  const handleAdd = async () => {
     setIsLoading(true);
     const url = `/${sheetId}/values/${range}:append?valueInputOption=RAW`;
 
@@ -82,7 +86,7 @@ export default function AddModal({ row, setData, tableHeaders }) {
             );
           })}
           <div className="flex justify-end">
-            <Button disabled={isLoading} onClick={handleUpdate}>
+            <Button disabled={isLoading} onClick={handleAdd}>
               {isLoading ? "Adding..." : "Add"}
             </Button>
           </div>

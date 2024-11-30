@@ -39,11 +39,11 @@ const GSheetTable = () => {
     // setClientId(true);
     setToken("");
   };
-
+  console.log("hasClientId", hasClientId);
   return (
     <>
       {token ? (
-        <GoogleSheetTable setHasClientId={setHasClientId} />
+        <GoogleSheetTable setHasClientId={setHasClientId} setToken={setToken} />
       ) : (
         <div>
           {!hasClientId ? (

@@ -26,7 +26,7 @@ import {
 } from "./ui/table";
 import TableSkeleton from "./ui/TableSkeleton";
 
-export default function GoogleSheetTable({ setHasClientId }) {
+export default function GoogleSheetTable({ setHasClientId, setToken }) {
   const [clientId, setClientId] = useState("");
   const { data, setData, isFetching, setIsFetching } = useFetchData(null);
   const { setSheetLink, sheetLink } = useSheetLink();
@@ -118,6 +118,7 @@ export default function GoogleSheetTable({ setHasClientId }) {
     localStorage.removeItem("token");
     setHasClientId(true);
     localStorage.removeItem("sheet-id");
+    setToken("");
   };
 
   return (

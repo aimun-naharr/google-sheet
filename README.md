@@ -91,21 +91,6 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
 
 ---
 
-## **Step 7: Test Your Application**
-
-1. Run your app and use the OAuth flow to authenticate with your Google account.
-2. Once authenticated, your app will receive an access token to interact with Google Sheets.
-3. Use the Google Sheets API to perform operations like creating, reading, updating, and deleting data.
-
----
-
-## **Additional Resources**
-
-- [Google Sheets API Documentation](https://developers.google.com/sheets/api)
-- [Google API Client Libraries](https://developers.google.com/api-client-library)
-
----
-
 With these steps, your app is ready to interact with Google Sheets using OAuth authentication.
 
 ## How to use this app:

@@ -91,8 +91,6 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
 
 ---
 
-With these steps, your app is ready to interact with Google Sheets using OAuth authentication.
-
 ## How to use this app:
 
 1. Obtain the client ID from the Google Cloud Console.

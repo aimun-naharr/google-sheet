@@ -71,7 +71,10 @@ export default function GoogleSheetTable({ setHasClientId }) {
   const handleOnchange = (e) => {
     const { value } = e.target;
     setSheetLinkValue(value);
-    if (checkIfSheetLinkIsValid(value)) {
+    if (
+      checkIfSheetLinkIsValid(value) ||
+      checkIfSheetLinkIsValid(sheetLinkValue)
+    ) {
       setDisableGetBtn(false);
       setErrorMessage("");
     } else {
@@ -147,7 +150,7 @@ export default function GoogleSheetTable({ setHasClientId }) {
             </div>
 
             <div className="">
-              <Button disabled={sheetLink.length < 1} onClick={handleGetData}>
+              <Button disabled={disableGetBtn} onClick={handleGetData}>
                 Get Data
               </Button>
             </div>
@@ -250,7 +253,7 @@ export default function GoogleSheetTable({ setHasClientId }) {
           </Table>
         </div>
       ) : null}
-      <div className="h-40"></div>
+      <div className="h-20"></div>
     </div>
   );
 }

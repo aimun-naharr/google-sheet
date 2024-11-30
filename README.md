@@ -77,20 +77,6 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
 1. After creating the OAuth Client ID, a dialog will display your **Client ID** and **Client Secret**.
 2. Copy the **Client Id** and paste it in the app to login.
 
----
-
-## **Step 6: Integrate the Credentials in Your App**
-
-1. Place the downloaded JSON file in your app's working directory.
-2. Use the file to authenticate with the Google Sheets API. For example:
-   - In Node.js, use libraries like `google-auth-library` or `googleapis`.
-   - Specify the required API scopes for accessing Google Sheets:
-     ```plaintext
-     https://www.googleapis.com/auth/spreadsheets
-     ```
-
----
-
 ## How to use this app:
 
 1. Obtain the client ID from the Google Cloud Console.

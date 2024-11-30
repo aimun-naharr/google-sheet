@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 export default function useSheetLink() {
-  const [sheetLink, setSheetLink] = useState("");
+  const cacheSheetLink = localStorage.getItem("sheet-link") ?? "";
+  const [sheetLink, setSheetLink] = useState(cacheSheetLink);
   const [sheetId, setSheetId] = useState("");
   const extractSheetId = (sheetUrl) => {
     try {

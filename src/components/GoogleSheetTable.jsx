@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFetchData from "../hooks/useFetchData";
 import useSheetLink from "../hooks/useSheetLink";
 import {
@@ -26,12 +26,17 @@ import {
 } from "./ui/table";
 import TableSkeleton from "./ui/TableSkeleton";
 
-export default function GoogleSheetTable() {
+export default function GoogleSheetTable({ setHasClientId }) {
+  const [clientId, setClientId] = useState("");
   const { data, setData, isFetching, setIsFetching } = useFetchData(null);
-  const { setSheetLink, sheetId } = useSheetLink();
-  const [sheetLinkValue, setSheetLinkValue] = useState("");
+  const { setSheetLink, sheetLink } = useSheetLink();
+  const [sheetLinkValue, setSheetLinkValue] = useState(sheetLink);
   const [disableGetBtn, setDisableGetBtn] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    setSheetLinkValue(sheetLink);
+  }, [sheetLink]);
 
   const actionCol = { name: "", value: "#" };
   const tableHeaders =
@@ -45,7 +50,7 @@ export default function GoogleSheetTable() {
 
   const handleGetData = async () => {
     setSheetLink(sheetLinkValue);
-    setSheetLinkValue("");
+    localStorage.setItem("sheet-link", sheetLinkValue);
     setIsFetching(true);
     try {
       const id = extractSheetId(sheetLinkValue);
@@ -105,10 +110,31 @@ export default function GoogleSheetTable() {
   const rowsLastIndex = tableRows ? tableRows?.length + 2 : 2;
   const lastRow = tableRows ? getLastRow(rowsLastIndex) : getLastRow();
 
+  const handleClientId = () => {
+    localStorage.setItem("client-id", clientId);
+    localStorage.removeItem("token");
+    setHasClientId(true);
+    localStorage.removeItem("sheet-id");
+  };
+
   return (
     <div className="mt-20">
       <div className="container">
-        <h1 className="font-semibold text-xl">Update your google sheet</h1>
+        <div className="flex gap-2 items-end ">
+          <div className="lg:w-2/5 w-full shrink-0">
+            <Label>Client Id</Label>
+            <Input
+              value={clientId ?? ""}
+              onChange={(e) => setClientId(e.target.value)}
+            />
+          </div>
+          <Button disabled={clientId.length < 1} onClick={handleClientId}>
+            Update Client Id
+          </Button>
+        </div>
+        <small>You&apos;ll be logged out if you update the client id</small>
+
+        <h1 className="font-semibold text-xl mt-4">Update your google sheet</h1>
         <p className="mt-1 mb-4 text-gray-500 max-w-lg text-sm leading-relaxed">
           Just open your Google Sheet, copy the URL, and pop it into this input
           box to fetch your data easy and quick!
@@ -121,7 +147,7 @@ export default function GoogleSheetTable() {
             </div>
 
             <div className="">
-              <Button disabled={disableGetBtn} onClick={handleGetData}>
+              <Button disabled={sheetLink.length < 1} onClick={handleGetData}>
                 Get Data
               </Button>
             </div>

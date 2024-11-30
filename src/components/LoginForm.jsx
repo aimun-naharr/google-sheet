@@ -1,17 +1,16 @@
-import React, { useState } from "react";
-import { Button } from "./ui/button";
-import axios from "axios";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router";
+import { Button } from "./ui/button";
 
-export default function LoginForm() {
-  let navigate = useNavigate();
+export default function LoginForm({ setToken }) {
+  const navigate = useNavigate();
   const handleLogin = useGoogleLogin({
     onSuccess: (response) => {
       try {
         // Extract the access token from the response
         const { access_token } = response;
-        navigate("/google-sheet-table");
+        setToken(access_token);
+        // navigate("/google-sheet-table");
 
         // Store the access token
         localStorage.setItem("token", access_token);

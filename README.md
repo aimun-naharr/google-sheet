@@ -39,7 +39,7 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
 
 ## **Step 2: Enable the Google Sheets API**
 
-1. Navigate to **"API & Services"** from the left-hand menu.
+1. Navigate to **"API & Services"** .
 2. Click **"Library"**.
 3. Search for **"Google Sheets API"** in the search bar.
 4. Select the API and click **"Enable"**.
@@ -55,7 +55,8 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
    - **User Support Email**: Provide a valid email address.
    - **Developer Contact Information**: Enter an email address for communication.
 4. Click **"Save and Continue"** (you can skip optional fields for now).
-5. Skip the **Scopes** and **Test Users** sections by clicking **"Save and Continue"** until you finish.
+5. Skip the **Scopes**
+6. In the test user section add your email address;
 
 ---
 

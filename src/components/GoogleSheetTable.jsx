@@ -119,8 +119,8 @@ export default function GoogleSheetTable({ setHasClientId }) {
 
   return (
     <div className="mt-20">
-      <div className="container">
-        <div className="flex gap-2 items-end ">
+      <div className="container ">
+        <div className="flex gap-2 items-end lg:flex-row flex-col">
           <div className="lg:w-2/5 w-full shrink-0">
             <Label>Client Id</Label>
             <Input
@@ -140,8 +140,8 @@ export default function GoogleSheetTable({ setHasClientId }) {
           box to fetch your data easy and quick!
         </p>
         <div className="mt-2">
-          <div className="flex gap-4 items-end">
-            <div className="w-2/5 shrink-0">
+          <div className="flex gap-4 items-end lg:flex-row flex-col">
+            <div className="lg:w-2/5 w-full  shrink-0">
               <Label>Sheet Url</Label>
               <Input value={sheetLinkValue} onChange={handleOnchange} />
             </div>

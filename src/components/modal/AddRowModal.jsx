@@ -57,7 +57,7 @@ export default function AddRowModal({ row, setData, tableHeaders }) {
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger
-        className=" "
+        className="mt-4 "
         onClick={() => {
           setOpenModal(true);
         }}

@@ -1,5 +1,5 @@
 import { Edit } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getRows } from "../../services/actions";
 import baseAxios from "../../services/api";
 import { Button } from "../ui/button";
@@ -22,6 +22,10 @@ export default function UpdateModal({ row, setData, tableHeaders }) {
   const rangeKeys = [rangeArr[0], rangeArr[rangeArr.length - 1]].join(":");
   const range = `Sheet1!${rangeKeys}`;
   const sheetId = localStorage.getItem("sheet-id");
+
+  useEffect(() => {
+    setUpdatedVal(row);
+  }, [openModal]);
 
   const values = Object.values(updatedVal);
   const handleOnChange = (key, value) => {

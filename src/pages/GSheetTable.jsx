@@ -49,7 +49,7 @@ const GSheetTable = () => {
         <div>
           {!hasClientId ? (
             <div className="h-screen w-full grid place-items-center">
-              <div className="w-[400px] space-y-8">
+              <div className="w-full max-w-[400px] space-y-8 px-4">
                 <div>
                   <Label>Client Id</Label>
                   <Input

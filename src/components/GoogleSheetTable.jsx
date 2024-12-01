@@ -167,13 +167,13 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
           box to fetch your data easy and quick!
         </p>
         <div className="mt-2">
-          <div className="flex gap-4 items-end lg:flex-row flex-col">
+          <div className="flex gap-2 items-end lg:flex-row flex-col">
             <div className="lg:w-2/5 w-full  shrink-0">
               <Label>Sheet Url</Label>
               <Input value={sheetLinkValue} onChange={handleOnchange} />
             </div>
 
-            <div className="">
+            <div className="flex justify-start w-full">
               <Button onClick={handleGetData}>Get Data</Button>
             </div>
           </div>

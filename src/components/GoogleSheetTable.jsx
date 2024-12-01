@@ -57,10 +57,6 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
           const id = extractSheetId(sheetLinkValue);
           const response = await getRows(id);
           setData(response.data);
-          // console.log("response", response.headers.get("etag"));
-          // if (etag !== data.etag) {
-          // setEtag(data.etag);
-          // }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -78,7 +74,6 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
       try {
         const id = extractSheetId(sheetLinkValue);
         const response = await getRows(id);
-        console.log("get response", response);
         setData(response.data);
         setIsFetching(false);
       } catch (error) {

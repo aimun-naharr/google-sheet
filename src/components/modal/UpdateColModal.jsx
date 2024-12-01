@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateRowFromColumnForUpdate } from "../../lib/utils";
 import { getRows } from "../../services/actions";
 import baseAxios from "../../services/api";
@@ -32,6 +32,9 @@ export default function UpdateColModal({ setData, tableHeaders }) {
       [key]: value,
     }));
   };
+  useEffect(() => {
+    setUpdatedVal(row);
+  }, [openModal]);
   const handleAdd = async () => {
     setIsLoading(true);
     const url = `/${sheetId}/values/${range}?valueInputOption=RAW`;

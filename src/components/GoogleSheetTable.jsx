@@ -33,6 +33,7 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
   const [sheetLinkValue, setSheetLinkValue] = useState(sheetLink);
   const [disableGetBtn, setDisableGetBtn] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [etag, setEtag] = useState(null);
 
   useEffect(() => {
     setSheetLinkValue(sheetLink);
@@ -60,9 +61,18 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
     };
 
     // Fetch data every second
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       if (token && sheetLinkValue) {
-        fetchData();
+        try {
+          const id = extractSheetId(sheetLinkValue);
+          const response = await getRows(id);
+          if (etag !== data.etag) {
+            setData(response.data);
+            setEtag(data.etag);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
       }
     }, 2000);
 

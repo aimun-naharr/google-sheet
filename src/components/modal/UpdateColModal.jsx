@@ -1,5 +1,5 @@
-import { Edit } from "lucide-react";
 import { useState } from "react";
+import { generateRowFromColumnForUpdate } from "../../lib/utils";
 import { getRows } from "../../services/actions";
 import baseAxios from "../../services/api";
 import { Button } from "../ui/button";
@@ -14,9 +14,11 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-export default function UpdateModal({ row, setData, tableHeaders }) {
+export default function UpdateColModal({ setData, tableHeaders }) {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const row = generateRowFromColumnForUpdate(tableHeaders);
   const [updatedVal, setUpdatedVal] = useState(row);
   const rangeArr = Object.keys(row);
   const rangeKeys = [rangeArr[0], rangeArr[rangeArr.length - 1]].join(":");
@@ -30,14 +32,14 @@ export default function UpdateModal({ row, setData, tableHeaders }) {
       [key]: value,
     }));
   };
-  const handleUpdate = async () => {
+  const handleAdd = async () => {
     setIsLoading(true);
-    try {
-      const url = `/${sheetId}/values/${range}?valueInputOption=RAW`;
+    const url = `/${sheetId}/values/${range}?valueInputOption=RAW`;
 
-      const body = {
-        values: [values],
-      };
+    const body = {
+      values: [values],
+    };
+    try {
       const response = await baseAxios.put(url, body);
       if (response?.status === 200) {
         const allRowsResponse = await getRows(sheetId);
@@ -55,32 +57,27 @@ export default function UpdateModal({ row, setData, tableHeaders }) {
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger
         asChild
-        className="text-sm  w-full  "
+        className=" mt-4"
         onClick={() => {
           setOpenModal(true);
         }}
       >
-        <Button size="sm" variant="outline">
-          {" "}
-          <Edit size={14} color="green" />
-          Edit
-        </Button>
+        <Button variant="outline">Update Column</Button>
       </DialogTrigger>
-
-      <DialogContent className="max-w-[500px]">
+      <DialogContent className="max-w-[500px] max-h-[70vh] overflow-y-auto ">
         <DialogHeader>
-          <DialogTitle>Update Row</DialogTitle>
-          <DialogDescription>Update row with new data</DialogDescription>
+          <DialogTitle>Update Column</DialogTitle>
+          <DialogDescription>Update columns as you want</DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-6 ">
-          {Object.keys(updatedVal).map((key) => {
-            const keyInt = key.split("")[0];
-            const label = tableHeaders.find((th) => th.name.includes(keyInt));
-
+        <div className="flex flex-col gap-6 relative">
+          {Object.keys(updatedVal).map((key, i) => {
             return (
-              <div key={key} className="grid grid-cols-6 items-center">
-                <Label className="col-span-2">{label.value}:</Label>
+              <div
+                key={`${i + 1}-col`}
+                className="grid grid-cols-6 items-center"
+              >
+                <Label className="col-span-2">{key}:</Label>
                 <Input
                   value={updatedVal[key]}
                   onChange={(e) => handleOnChange(key, e.target.value)}
@@ -89,8 +86,8 @@ export default function UpdateModal({ row, setData, tableHeaders }) {
               </div>
             );
           })}
-          <div className="flex justify-end">
-            <Button disabled={isLoading} onClick={handleUpdate}>
+          <div className="flex justify-end sticky bottom-0 bg-white">
+            <Button disabled={isLoading} onClick={handleAdd}>
               {isLoading ? "Updating..." : "Update"}
             </Button>
           </div>

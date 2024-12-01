@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useFetchData from "../hooks/useFetchData";
 import useSheetLink from "../hooks/useSheetLink";
 import {
@@ -12,6 +12,7 @@ import { getRows } from "../services/actions";
 import AddColModal from "./modal/AddColModal";
 import AddRowModal from "./modal/AddRowModal";
 import DeleteModal from "./modal/DeleteModal";
+import UpdateColModal from "./modal/UpdateColModal";
 import UpdateModal from "./modal/UpdateModal";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -33,7 +34,7 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
   const [sheetLinkValue, setSheetLinkValue] = useState(sheetLink);
   const [disableGetBtn, setDisableGetBtn] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [etag, setEtag] = useState(null);
+  const intervalIdRef = useRef(null);
 
   useEffect(() => {
     setSheetLinkValue(sheetLink);
@@ -50,9 +51,8 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
       : null;
 
   useEffect(() => {
-    // Fetch data every second
-    const intervalId = setInterval(async () => {
-      if (token && sheetLinkValue) {
+    intervalIdRef.current = setInterval(async () => {
+      if (token && sheetLinkValue && !isFetching) {
         try {
           const id = extractSheetId(sheetLinkValue);
           const response = await getRows(id);
@@ -61,13 +61,16 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
           console.error("Error fetching data:", error);
         }
       }
-    }, 2000);
+    }, 3000);
+
     // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => clearInterval(intervalIdRef.current);
+  }, [token, sheetLinkValue, isFetching]);
 
   const handleGetData = async () => {
     if (sheetLinkValue) {
+      clearInterval(intervalIdRef.current);
+      intervalIdRef.current = null;
       setSheetLink(sheetLinkValue);
       localStorage.setItem("sheet-link", sheetLinkValue);
       setIsFetching(true);
@@ -179,12 +182,17 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
           )}
 
           {data && data.values && data?.values.length > 0 ? (
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end items-center mb-4 gap-4">
               <AddRowModal
                 row={lastRow}
                 setData={setData}
                 tableHeaders={tableHeaders}
               />
+              <UpdateColModal
+                setData={setData}
+                tableHeaders={tableHeaders.slice(0, -1)}
+              />
+              {/* <AddColModal setData={setData} tableHeaders={tableHeaders} /> */}
             </div>
           ) : null}
         </div>
@@ -223,10 +231,7 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
                     );
                   }
                   return (
-                    <TableHead
-                      className=" text-nowrap"
-                      key={`${header.name}-${i + 1}`}
-                    >
+                    <TableHead className=" text-nowrap" key={`header-${i + 1}`}>
                       {header.value}
                     </TableHead>
                   );
@@ -235,7 +240,7 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
             </TableHeader>
             <TableBody>
               {tableRows?.map((row, rowIndex) => (
-                <TableRow key={`${Object.keys(row).join(":")}`}>
+                <TableRow key={`tRow-${rowIndex + 1}`}>
                   {tableHeaders?.map((header, colIndex) => {
                     const head = header.name.split("")[0];
                     const rowKey = Object.keys(row).find((itm) =>
@@ -261,7 +266,7 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
                       );
                     }
                     return (
-                      <TableCell key={`${rowKey}`} className="text-nowrap">
+                      <TableCell key={`td-${colIndex}`} className="text-nowrap">
                         {row[rowKey]}
                       </TableCell>
                     );

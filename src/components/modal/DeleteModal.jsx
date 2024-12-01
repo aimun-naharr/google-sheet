@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import { Trash } from "lucide-react";
+import { useState } from "react";
+import { getRows } from "../../services/actions";
+import baseAxios from "../../services/api";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,11 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Button } from "../ui/button";
-import baseAxios from "../../services/api";
-import useFetchData from "../../hooks/useFetchData";
-import { getRows } from "../../services/actions";
-import { Trash } from "lucide-react";
 
 export default function DeleteModal({ row, setData }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +42,7 @@ export default function DeleteModal({ row, setData }) {
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger
+        asChild
         className="text-sm w-full "
         onClick={() => {
           setOpenModal(true);

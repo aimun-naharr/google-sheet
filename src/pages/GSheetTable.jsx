@@ -11,9 +11,7 @@ const GSheetTable = () => {
   const [token, setToken] = useState(accessToken);
   const [hasClientId, setHasClientId] = useState(false);
   const cachedClientId = localStorage.getItem("client-id");
-  console.log("cache", cachedClientId);
   const [clientId, setClientId] = useState(cachedClientId);
-  console.log("clientId", clientId);
 
   useEffect(() => {
     setToken(accessToken);
@@ -39,7 +37,6 @@ const GSheetTable = () => {
     // setClientId(true);
     setToken("");
   };
-  console.log("hasClientId", hasClientId);
   return (
     <>
       {token ? (

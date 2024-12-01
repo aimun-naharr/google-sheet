@@ -57,6 +57,7 @@ export default function AddRowModal({ row, setData, tableHeaders }) {
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger
+        asChild
         className="mt-4 "
         onClick={() => {
           setOpenModal(true);
@@ -71,15 +72,18 @@ export default function AddRowModal({ row, setData, tableHeaders }) {
         </DialogHeader>
 
         <div className="flex flex-col gap-6 ">
-          {Object.keys(updatedVal).map((key) => {
+          {Object.keys(updatedVal).map((key, i) => {
             const keyInt = key.split("")[0];
             const label = tableHeaders.find((th) => th.name.includes(keyInt));
             return (
-              <div key={key} className="grid grid-cols-6 items-center">
+              <div
+                key={`row-${i + 10}`}
+                className="grid grid-cols-6 items-center"
+              >
                 <Label className="col-span-2">{label.value}:</Label>
                 <Input
                   value={updatedVal[key]}
-                  onChange={(e) => handleOnChange(key, e.target.value)}
+                  onChange={(e) => handleOnChange(key, e.target?.value)}
                   className="col-span-4"
                 />
               </div>

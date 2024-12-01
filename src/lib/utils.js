@@ -23,6 +23,38 @@ export const generateRowFromColumn = ( tableHeaders ) => {
   } );
   return obj;
 };
+export const generateRowFromColumnForUpdate = ( arr ) => {
+
+  const result = [...arr];
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  arr.forEach( item => {
+    const currentName = item.name;
+    const letterPart = currentName[0];
+    const numberPart = parseInt( currentName.slice( 1 ), 10 ); // Extract the number
+
+    // Find the starting index in the alphabet array
+    let startIndex = alphabet.indexOf( letterPart );
+
+    // Add objects with dynamic names until reaching 'z1'
+    while ( startIndex < alphabet.length - 1 ) {
+      startIndex++;
+      const newName = alphabet[startIndex] + numberPart; // Generate the next name
+
+      // Check if the name already exists in the array
+      if ( !result.some( obj => obj.name === newName ) ) {
+        result.push( { name: newName, value: '' } ); // Add new object with default value
+      }
+    }
+  } );
+
+  const obj = {};
+  result?.forEach( ( header ) => {
+    obj[header.name] = header.value;
+  } );
+  return obj;
+
+};
 export const generateDefaultHeaders = () => {
   const headers = []
   for ( let i = 0; i <= 25; i++ ) {

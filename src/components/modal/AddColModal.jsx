@@ -17,7 +17,6 @@ import { Label } from "../ui/label";
 export default function AddColModal({ setData, tableHeaders }) {
   const [openModal, setOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const row = generateRowFromColumn(tableHeaders);
   const [updatedVal, setUpdatedVal] = useState(row);
   const rangeArr = Object.keys(row);
@@ -56,6 +55,7 @@ export default function AddColModal({ setData, tableHeaders }) {
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger
+        asChild
         className=" "
         onClick={() => {
           setOpenModal(true);
@@ -70,9 +70,12 @@ export default function AddColModal({ setData, tableHeaders }) {
         </DialogHeader>
 
         <div className="flex flex-col gap-6 relative">
-          {Object.keys(updatedVal).map((key) => {
+          {Object.keys(updatedVal).map((key, i) => {
             return (
-              <div key={key} className="grid grid-cols-6 items-center">
+              <div
+                key={`column-${i + 10}`}
+                className="grid grid-cols-6 items-center"
+              >
                 <Label className="col-span-2">{key}:</Label>
                 <Input
                   value={updatedVal[key]}

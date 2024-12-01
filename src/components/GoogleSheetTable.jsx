@@ -50,32 +50,22 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
       : null;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const id = extractSheetId(sheetLinkValue);
-        const response = await getRows(id);
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     // Fetch data every second
     const intervalId = setInterval(async () => {
       if (token && sheetLinkValue) {
         try {
           const id = extractSheetId(sheetLinkValue);
           const response = await getRows(id);
-          if (etag !== data.etag) {
-            setData(response.data);
-            setEtag(data.etag);
-          }
+          setData(response.data);
+          // console.log("response", response.headers.get("etag"));
+          // if (etag !== data.etag) {
+          // setEtag(data.etag);
+          // }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       }
     }, 2000);
-
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
@@ -88,6 +78,7 @@ export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
       try {
         const id = extractSheetId(sheetLinkValue);
         const response = await getRows(id);
+        console.log("get response", response);
         setData(response.data);
         setIsFetching(false);
       } catch (error) {

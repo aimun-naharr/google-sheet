@@ -19,7 +19,7 @@ export default function AddRowModal({ row, setData, tableHeaders }) {
   const [updatedVal, setUpdatedVal] = useState(row);
   useEffect(() => {
     setUpdatedVal(row);
-  }, [row]);
+  }, [openModal]);
   const rangeArr = Object.keys(row);
   const rangeKeys = [rangeArr[0], rangeArr[rangeArr.length - 1]].join(":");
 

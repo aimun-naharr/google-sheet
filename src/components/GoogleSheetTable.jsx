@@ -26,7 +26,7 @@ import {
 } from "./ui/table";
 import TableSkeleton from "./ui/TableSkeleton";
 
-export default function GoogleSheetTable({ setHasClientId, setToken }) {
+export default function GoogleSheetTable({ setHasClientId, setToken, token }) {
   const [clientId, setClientId] = useState("");
   const { data, setData, isFetching, setIsFetching } = useFetchData(null);
   const { setSheetLink, sheetLink } = useSheetLink();
@@ -48,17 +48,41 @@ export default function GoogleSheetTable({ setHasClientId, setToken }) {
       ? generateFormattedData(data?.values.slice(1))
       : null;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = extractSheetId(sheetLinkValue);
+        const response = await getRows(id);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    // Fetch data every second
+    const intervalId = setInterval(() => {
+      if (token && sheetLinkValue) {
+        fetchData();
+      }
+    }, 2000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
   const handleGetData = async () => {
-    setSheetLink(sheetLinkValue);
-    localStorage.setItem("sheet-link", sheetLinkValue);
-    setIsFetching(true);
-    try {
-      const id = extractSheetId(sheetLinkValue);
-      const response = await getRows(id);
-      setData(response.data);
-      setIsFetching(false);
-    } catch (error) {
-      setIsFetching(false);
+    if (sheetLinkValue) {
+      setSheetLink(sheetLinkValue);
+      localStorage.setItem("sheet-link", sheetLinkValue);
+      setIsFetching(true);
+      try {
+        const id = extractSheetId(sheetLinkValue);
+        const response = await getRows(id);
+        setData(response.data);
+        setIsFetching(false);
+      } catch (error) {
+        setIsFetching(false);
+      }
     }
   };
 
@@ -151,9 +175,7 @@ export default function GoogleSheetTable({ setHasClientId, setToken }) {
             </div>
 
             <div className="">
-              <Button disabled={disableGetBtn} onClick={handleGetData}>
-                Get Data
-              </Button>
+              <Button onClick={handleGetData}>Get Data</Button>
             </div>
           </div>
           {errorMessage.length > 0 && (

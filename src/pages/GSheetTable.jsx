@@ -43,7 +43,11 @@ const GSheetTable = () => {
   return (
     <>
       {token ? (
-        <GoogleSheetTable setHasClientId={setHasClientId} setToken={setToken} />
+        <GoogleSheetTable
+          setHasClientId={setHasClientId}
+          setToken={setToken}
+          token={token}
+        />
       ) : (
         <div>
           {!hasClientId ? (

@@ -18,7 +18,7 @@ To set up the project, follow these steps:
 
 Follow these steps to create an OAuth Client ID for accessing the Google Sheets API to create, read, update, and delete data.
 
----
+
 
 ## **Step 1: Set Up a Google Cloud Project**
 
@@ -30,7 +30,7 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
    - Select a location (optional).
    - Click **"Create"**.
 
----
+
 
 ## **Step 2: Enable the Google Sheets API**
 
@@ -39,7 +39,7 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
 3. Search for **"Google Sheets API"** in the search bar.
 4. Select the API and click **"Enable"**.
 
----
+
 
 ## **Step 3: Set Up OAuth Consent Screen**
 
@@ -53,7 +53,7 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
 5. Skip the **Scopes**
 6. In the test user section add your email address;
 
----
+
 
 ## **Step 4: Create OAuth Client ID**
 
@@ -66,7 +66,7 @@ Follow these steps to create an OAuth Client ID for accessing the Google Sheets 
    - For development, you can use `http://localhost:5173` (adjust the port if needed).
 6. Click **"Create"**.
 
----
+
 
 ## **Step 5: Download Client Credentials**
 

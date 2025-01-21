@@ -13,11 +13,6 @@ To set up the project, follow these steps:
 3. Run the local server:
    `npm run dev`
 
-# Guide: Create OAuth Client ID for Google Sheets API
-
-Follow these steps to create an OAuth Client ID for accessing the Google Sheets API to create, read, update, and delete data.
-
----
 
 # Guide: Create OAuth Client ID for Google Sheets API
 
